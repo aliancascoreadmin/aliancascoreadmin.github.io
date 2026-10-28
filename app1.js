@@ -9403,6 +9403,7 @@ Gb.prototype = {
         }
         match[match.length - 1].goals[match[match.length - 1].goals.length - 1].for = a.w;
         match[match.length - 1].goals[match[match.length - 1].goals.length - 1].goalIndex = goalParsed;
+        match[match.length - 1].goals[match[match.length - 1].goals.length - 1].tick = match[match.length - 1].gameTicks;
         goalParsed++;
       }
     };
@@ -16244,7 +16245,7 @@ return{gk:c[0].p,conf:Math.round(100*(0.5*Math.min(1,m/0.12)+0.5*Math.min(1,c[0]
 function build(blocks,titulo,data){const A=(blocks[0].redTeam||[]).map(nm),B=(blocks[0].blueTeam||[]).map(nm),tempos=[],info=[];
 for(const b of blocks){const red=(b.redTeam||[]).map(nm),aRed=red.filter(x=>A.includes(x)).length>=red.filter(x=>B.includes(x)).length;
 const ga=aRed?b.scoreRed:b.scoreBlue,gb=aRed?b.scoreBlue:b.scoreRed,ka=gkGuess(b,aRed?'Red':'Blue'),kb=gkGuess(b,aRed?'Blue':'Red');
-tempos.push({gols_A:ga,gols_B:gb,gk_A:ka.gk,gk_B:kb.gk});info.push({conf_A:ka.conf,conf_B:kb.conf,segundos:Math.round(b.gameTicks/60)})}
+tempos.push({gols_A:ga,gols_B:gb,gk_A:ka.gk,gk_B:kb.gk,dur:Math.round(b.gameTicks/60),gols:(b.goals||[]).filter(g=>g&&g.for&&typeof g.tick=='number').map(g=>({s:Math.max(0,Math.round(g.tick/60)),f:(g.for=='Red')==aRed?'A':'B'}))});info.push({conf_A:ka.conf,conf_B:kb.conf,segundos:Math.round(b.gameTicks/60)})}
 return{titulo,data:data||'',times:{A,B},tempos,_gk_inferido_por_posicao_dos_chutes:info}}
 function toMatches(blocks,{titulo,doisTempos,data}){const ok=(blocks||[]).filter(b=>b.gameTicks>=3000&&b.redTeam&&b.redTeam.length&&b.blueTeam&&b.blueTeam.length);
 if(!ok.length)throw new Error('Nenhum jogo completo no replay (mínimo de 50 s).');
