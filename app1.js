@@ -16251,7 +16251,7 @@ for(const b of blocks){const red=(b.redTeam||[]).map(nm),aRed=red.filter(x=>A.in
 const ga=aRed?b.scoreRed:b.scoreBlue,gb=aRed?b.scoreBlue:b.scoreRed,ka=gkGuess(b,aRed?'Red':'Blue'),kb=gkGuess(b,aRed?'Blue':'Red');
 tempos.push({gols_A:ga,gols_B:gb,gk_A:ka.gk,gk_B:kb.gk,dur:Math.round(b.gameTicks/60),gols:(b.goals||[]).filter(g=>g&&g.for&&typeof g.tick=='number').map(g=>({s:Math.max(0,Math.round(g.tick/60)),f:(g.for=='Red')==aRed?'A':'B'}))});info.push({conf_A:ka.conf,conf_B:kb.conf,segundos:Math.round(b.gameTicks/60)})}
 const U0=blocks[0],aR0=(U0.redTeam||[]).map(nm).filter(x=>A.includes(x)).length>=(U0.redTeam||[]).map(nm).filter(x=>B.includes(x)).length,uc=uniCode(U0.uni&&U0.uni[aR0?0:1]),ub=uniCode(U0.uni&&U0.uni[aR0?1:0]);
-return{titulo,data:data||'',times:{A,B},tempos,...(uc&&ub?{uni:{A:uc,B:ub}}:{}),_gk_inferido_por_posicao_dos_chutes:info}}
+return{titulo,data:data||'',times:{A,B},tempos,_gk_inferido_por_posicao_dos_chutes:info}}
 function toMatches(blocks,{titulo,doisTempos,data}){const ok=(blocks||[]).filter(b=>b.gameTicks>=3000&&b.redTeam&&b.redTeam.length&&b.blueTeam&&b.blueTeam.length);
 if(!ok.length)throw new Error('Nenhum jogo completo no replay (mínimo de 50 s).');
 return doisTempos?[build(ok,titulo||'Partida',data)]:ok.map((b,i)=>build([b],(titulo||'Partida')+(ok.length>1?' '+(i+1):''),data))}
