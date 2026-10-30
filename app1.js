@@ -11018,6 +11018,7 @@ O.prototype = {
         if (keepUpdating) {
           //if (Math.random() < 0.002) console.log(a,b);
           match[match.length - 1].gameTicks++;
+          { const _gt = match[match.length - 1].gameTicks; if (_gt === 0 || _gt === 60 || _gt === 600) { try { const _T = global.__jb.T, _k = (_T.gc && _T.gc.kb) || _T.kb, _c = t => t ? { hd: t.hd, ed: t.ed, fb: (t.fb || []).slice(0, 3) } : null; match[match.length - 1].uni = [_c(_k[1]), _c(_k[2])]; } catch (_e) { } } }
           if (d[0].a.x < (redGoalCord[0] / 3)) match[match.length - 1].thirds[0]++;
           else if (d[0].a.x < (blueGoalCord[0] / 3)) match[match.length - 1].thirds[1]++;
           else match[match.length - 1].thirds[2]++;
@@ -16242,11 +16243,15 @@ const c=Object.entries(res).filter(([p,a])=>a.length>=3&&a.length>=0.05*tot).map
 if(!c.length)return{gk:'',conf:0};
 const m=c.length>1?(c[1].sc-c[0].sc):0.2;
 return{gk:c[0].p,conf:Math.round(100*(0.5*Math.min(1,m/0.12)+0.5*Math.min(1,c[0].own/0.6)))}}catch(e){return{gk:'',conf:0}}}
+const uniCode=t=>{try{if(!t||!t.fb||!t.fb.length)return'';const hx=n=>(n>>>0&16777215).toString(16).padStart(6,'0'),f=t.fb.map(hx),a=(((+t.hd||0)%180)+180)%180,vert=a<22.5||a>=157.5,hor=a>=67.5&&a<112.5,dg=!vert&&!hor,pos=a<90;let p;
+if(f.length==1||f.every(x=>x==f[0]))p='s';else if(f.length==2)p=vert?'v':hor?'hh':pos?'dh':'eh';else p=vert?'vs':hor?'h3':pos?'e3':'d3';
+const c=p=='vs'?[f[0],f[1]]:f.slice(0,3);while(c.length<3)c.push('');if(p=='s'){c[1]='';c[2]=''}if(p=='v'||p=='hh'||p=='dh'||p=='eh')c[2]='';return[p,c[0],c[1],c[2],hx(t.ed)].join('|')}catch(e){return''}};
 function build(blocks,titulo,data){const A=(blocks[0].redTeam||[]).map(nm),B=(blocks[0].blueTeam||[]).map(nm),tempos=[],info=[];
 for(const b of blocks){const red=(b.redTeam||[]).map(nm),aRed=red.filter(x=>A.includes(x)).length>=red.filter(x=>B.includes(x)).length;
 const ga=aRed?b.scoreRed:b.scoreBlue,gb=aRed?b.scoreBlue:b.scoreRed,ka=gkGuess(b,aRed?'Red':'Blue'),kb=gkGuess(b,aRed?'Blue':'Red');
 tempos.push({gols_A:ga,gols_B:gb,gk_A:ka.gk,gk_B:kb.gk,dur:Math.round(b.gameTicks/60),gols:(b.goals||[]).filter(g=>g&&g.for&&typeof g.tick=='number').map(g=>({s:Math.max(0,Math.round(g.tick/60)),f:(g.for=='Red')==aRed?'A':'B'}))});info.push({conf_A:ka.conf,conf_B:kb.conf,segundos:Math.round(b.gameTicks/60)})}
-return{titulo,data:data||'',times:{A,B},tempos,_gk_inferido_por_posicao_dos_chutes:info}}
+const U0=blocks[0],aR0=(U0.redTeam||[]).map(nm).filter(x=>A.includes(x)).length>=(U0.redTeam||[]).map(nm).filter(x=>B.includes(x)).length,uc=uniCode(U0.uni&&U0.uni[aR0?0:1]),ub=uniCode(U0.uni&&U0.uni[aR0?1:0]);
+return{titulo,data:data||'',times:{A,B},tempos,...(uc&&ub?{uni:{A:uc,B:ub}}:{}),_gk_inferido_por_posicao_dos_chutes:info}}
 function toMatches(blocks,{titulo,doisTempos,data}){const ok=(blocks||[]).filter(b=>b.gameTicks>=3000&&b.redTeam&&b.redTeam.length&&b.blueTeam&&b.blueTeam.length);
 if(!ok.length)throw new Error('Nenhum jogo completo no replay (mínimo de 50 s).');
 return doisTempos?[build(ok,titulo||'Partida',data)]:ok.map((b,i)=>build([b],(titulo||'Partida')+(ok.length>1?' '+(i+1):''),data))}
