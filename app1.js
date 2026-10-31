@@ -16247,6 +16247,7 @@ const uniCode=t=>{try{if(!t||!t.fb||!t.fb.length)return'';const hx=n=>(n>>>0&167
 if(f.length==1||f.every(x=>x==f[0]))p='s';else if(f.length==2)p=vert?'v':hor?'hh':pos?'dh':'eh';else p=vert?'vs':hor?'h3':pos?'e3':'d3';
 const c=p=='vs'?[f[0],f[1]]:f.slice(0,3);while(c.length<3)c.push('');if(p=='s'){c[1]='';c[2]=''}if(p=='v'||p=='hh'||p=='dh'||p=='eh')c[2]='';return[p,c[0],c[1],c[2],hx(t.ed)].join('|')}catch(e){return''}};
 function build(blocks,titulo,data){const A=(blocks[0].redTeam||[]).map(nm),B=(blocks[0].blueTeam||[]).map(nm),tempos=[],info=[];
+for(const b of blocks.slice(1)){const red=(b.redTeam||[]).map(nm),blue=(b.blueTeam||[]).map(nm),ov=(L,T)=>L.filter(x=>T.includes(x)).length,aR=ov(red,A)+ov(blue,B)>=ov(red,B)+ov(blue,A);for(const x of aR?red:blue)if(!A.includes(x)&&!B.includes(x))A.push(x);for(const x of aR?blue:red)if(!B.includes(x)&&!A.includes(x))B.push(x)}
 for(const b of blocks){const red=(b.redTeam||[]).map(nm),aRed=red.filter(x=>A.includes(x)).length>=red.filter(x=>B.includes(x)).length;
 const ga=aRed?b.scoreRed:b.scoreBlue,gb=aRed?b.scoreBlue:b.scoreRed,ka=gkGuess(b,aRed?'Red':'Blue'),kb=gkGuess(b,aRed?'Blue':'Red');
 tempos.push({gols_A:ga,gols_B:gb,gk_A:ka.gk,gk_B:kb.gk,dur:Math.round(b.gameTicks/60),gols:(b.goals||[]).filter(g=>g&&g.for&&typeof g.tick=='number').map(g=>({s:Math.max(0,Math.round(g.tick/60)),f:(g.for=='Red')==aRed?'A':'B'}))});info.push({conf_A:ka.conf,conf_B:kb.conf,segundos:Math.round(b.gameTicks/60)})}
