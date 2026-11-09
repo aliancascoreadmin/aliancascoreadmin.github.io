@@ -16255,7 +16255,10 @@ const U0=blocks[0],aR0=(U0.redTeam||[]).map(nm).filter(x=>A.includes(x)).length>
 return{titulo,data:data||'',times:{A,B},tempos,_gk_inferido_por_posicao_dos_chutes:info}}
 function toMatches(blocks,{titulo,doisTempos,data}){const ok=(blocks||[]).filter(b=>b.gameTicks>=3000&&b.redTeam&&b.redTeam.length&&b.blueTeam&&b.blueTeam.length);
 if(!ok.length)throw new Error('Nenhum jogo completo no replay (mínimo de 50 s).');
-return doisTempos?[build(ok,titulo||'Partida',data)]:ok.map((b,i)=>build([b],(titulo||'Partida')+(ok.length>1?' '+(i+1):''),data))}
+if(doisTempos)return[build(ok,titulo||'Partida',data)];
+const sk=b=>[...(b.redTeam||[]).map(nm)].sort().join('|')+'#'+[...(b.blueTeam||[]).map(nm)].sort().join('|'),sw=b=>[...(b.blueTeam||[]).map(nm)].sort().join('|')+'#'+[...(b.redTeam||[]).map(nm)].sort().join('|'),G=[];
+for(const b of ok){const g=G[G.length-1];if(g&&b.gameTicks<9000&&(sk(b)==sk(g[0])||sw(b)==sk(g[0])))g.push(b);else G.push([b])}
+return G.map((g,i)=>build(g,(titulo||'Partida')+(G.length>1?' '+(i+1):''),data))}
 return{analyze,toMatches,setPrior(f){PRI=typeof f=='function'?f:()=>0}}})();
 
 /*END HBR*/
