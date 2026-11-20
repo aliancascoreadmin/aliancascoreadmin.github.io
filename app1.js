@@ -16253,12 +16253,13 @@ const ga=aRed?b.scoreRed:b.scoreBlue,gb=aRed?b.scoreBlue:b.scoreRed,ka=gkGuess(b
 tempos.push({gols_A:ga,gols_B:gb,gk_A:ka.gk,gk_B:kb.gk,dur:Math.round(b.gameTicks/60),gols:(b.goals||[]).filter(g=>g&&g.for&&typeof g.tick=='number').map(g=>({s:Math.max(0,Math.round(g.tick/60)),f:(g.for=='Red')==aRed?'A':'B'}))});info.push({conf_A:ka.conf,conf_B:kb.conf,segundos:Math.round(b.gameTicks/60)})}
 const U0=blocks[0],aR0=(U0.redTeam||[]).map(nm).filter(x=>A.includes(x)).length>=(U0.redTeam||[]).map(nm).filter(x=>B.includes(x)).length,uc=uniCode(U0.uni&&U0.uni[aR0?0:1]),ub=uniCode(U0.uni&&U0.uni[aR0?1:0]);
 return{titulo,data:data||'',times:{A,B},tempos,_gk_inferido_por_posicao_dos_chutes:info}}
-function toMatches(blocks,{titulo,doisTempos,data}){const ok=(blocks||[]).filter(b=>b.gameTicks>=3000&&b.redTeam&&b.redTeam.length&&b.blueTeam&&b.blueTeam.length);
+function toMatches(blocks,{titulo,doisTempos,data}){const all=(blocks||[]).filter(b=>b.redTeam&&b.redTeam.length&&b.blueTeam&&b.blueTeam.length),ok=all.filter(b=>b.gameTicks>=3000);
 if(!ok.length)throw new Error('Nenhum jogo completo no replay (mínimo de 50 s).');
 if(doisTempos)return[build(ok,titulo||'Partida',data)];
+const ok2=all.filter(b=>b.gameTicks>=600);
 const sk=b=>[...(b.redTeam||[]).map(nm)].sort().join('|')+'#'+[...(b.blueTeam||[]).map(nm)].sort().join('|'),sw=b=>[...(b.blueTeam||[]).map(nm)].sort().join('|')+'#'+[...(b.redTeam||[]).map(nm)].sort().join('|'),G=[];
-for(const b of ok){const g=G[G.length-1];if(g&&b.gameTicks<9000&&(sk(b)==sk(g[0])||sw(b)==sk(g[0])))g.push(b);else G.push([b])}
-return G.map((g,i)=>build(g,(titulo||'Partida')+(G.length>1?' '+(i+1):''),data))}
+for(const b of ok2){const g=G[G.length-1];if(g&&b.gameTicks<9000&&(sk(b)==sk(g[0])||sw(b)==sk(g[0])))g.push(b);else G.push([b])}
+return G.map((g,i)=>{const m=build(g,(titulo||'Partida')+(G.length>1?' '+(i+1):''),data);if(g.reduce((a,b)=>a+b.gameTicks,0)<3000)m._skip=true;return m})}
 return{analyze,toMatches,setPrior(f){PRI=typeof f=='function'?f:()=>0}}})();
 
 /*END HBR*/
