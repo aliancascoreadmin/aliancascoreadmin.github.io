@@ -1,3 +1,4 @@
+(function(){var K='alianca_theme',m=null;try{m=localStorage.getItem(K)}catch(e){}var sys=function(){try{return matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch(e){return 'light'}};var cur=(m=='dark'||m=='light')?m:sys();var ap=function(t){cur=t;document.documentElement.setAttribute('data-theme',t);var b=document.getElementById('thm');if(b){b.textContent=t=='dark'?'☀️':'🌙';b.title=t=='dark'?'Mudar para modo claro':'Mudar para modo escuro'}};ap(cur);document.addEventListener('DOMContentLoaded',function(){ap(cur)});document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#thm');if(!b)return;ap(cur=='dark'?'light':'dark');try{localStorage.setItem(K,cur)}catch(e){}},true)})();
 
 /*HBR*/
 function __HBPAKO(self,window){
