@@ -16341,14 +16341,22 @@ __HBENGINE(G,mod,base.document,base.navigator,base.localStorage,base.location,wi
 if(!G.__jb)throw new Error('replay não reconhecido');return{jb:G.__jb,ex:mod.exports}}
 const nap=()=>new Promise(r=>setTimeout(r,0));
 async function stepTo(jb,f,fn){let t0=performance.now();while(jb.Y<f){while(jb.gg!=null&&jb.hg==jb.Y){const b=jb.gg;b.apply(jb.T);if(jb.fc)jb.fc(b);jb.Dl()}jb.Y++;jb.T.C(1);if(fn)fn();if((jb.Y&255)==0&&performance.now()-t0>30){await nap();t0=performance.now()}}}
+function mkOG(jb){const T=jb.T,S={lt:null,bt:{},pb:null,gs:[],GP:null},o=T.Ni;T.Ni=function(a){S.gs.push({y:jb.Y,team:a.w,lt:S.lt&&{...S.lt},bt:{Red:S.bt.Red&&{...S.bt.Red},Blue:S.bt.Blue&&{...S.bt.Blue}}});return o.apply(this,arguments)};
+S.off=()=>{T.Ni=o};
+S.after=()=>{const K=T.K;if(!K){S.pb=null;return}try{if(!S.GP){S.GP={};for(const g of K.S.tc)S.GP[g.qe.w]={x:g.W.x,y0:Math.min(g.W.y,g.ca.y),y1:Math.max(g.W.y,g.ca.y)}}const B=K.ta.F[0],cur={x:B.a.x,y:B.a.y,vx:B.D.x,vy:B.D.y};let best=null,bd=1e9;for(const p of T.I){if(!p.H||!p.ea||(p.ea.w!='Red'&&p.ea.w!='Blue'))continue;const d=Math.hypot(p.H.a.x-B.a.x,p.H.a.y-B.a.y)-B.Z-p.H.Z;if(d<1.5&&d<bd){bd=d;best=p}}
+if(best&&S.pb){const t={name:best.w,team:best.ea.w,y:jb.Y,pre:S.pb,last:jb.Y};if(S.lt&&S.lt.name==best.name&&S.lt.last>=jb.Y-3)S.lt.last=jb.Y;else S.lt=t;S.bt[best.ea.w]=S.lt.name==best.name?S.lt:t}S.pb=cur}catch(_){}};return S}
+function ogFinal(S,bl){try{const Bm=(bl||[]).filter(b=>b.gameTicks>=3000).sort((a,b)=>b.gameTicks-a.gameTicks)[0],gl=(Bm&&Bm.goals)||[];if(!S||!Bm||gl.length!=S.gs.length||!S.GP||Object.keys(S.GP).length<2)return null;
+const rn=x=>String(x).replace(/\s*\(own goal\)\s*$/i,'').trim(),ws=(pre,sc)=>{let x=pre.x,y=pre.y,vx=pre.vx,vy=pre.vy;const g=S.GP[sc=='Red'?'Blue':'Red'];if(!g)return null;for(let i=0;i<400;i++){const nx=x+vx,ny=y+vy;if((g.x>0&&x<g.x&&nx>=g.x)||(g.x<0&&x>g.x&&nx<=g.x)){const f=(g.x-x)/(nx-x||1e-9),yy=y+f*(ny-y);return yy>g.y0&&yy<g.y1}x=nx;y=ny;vx*=.99;vy*=.99;if(Math.abs(vx)+Math.abs(vy)<.02)return false}return false};
+const tl=[],og={};gl.forEach((g,i)=>{const h=S.gs[i],sc=h.team||String(g.for),cc=sc=='Red'?'Blue':'Red',eo=/\(own goal\)\s*$/i.test(g.scorer||'');let s=rn(g.scorer||''),o=eo?1:0,a=(g.assist&&g.assist.player)||'';const L=h.lt;if(L&&h.y-L.last<=40){if(L.team==cc){const w=ws(L.pre,sc),A=h.bt[sc];if(w&&A){if(eo){s=A.name;o=0}}else{s=L.name;o=1;a=''}}else if(eo){s=L.name;o=0}}
+if(o)a='';tl.push({t:Math.round(g.tick/60),s,a,o,r:sc=='Red'?'R':'B'});if(o)og[s]=(og[s]||0)+1});return{tl,og}}catch(_){return null}}
 async function cut(buf,onProg){const sl=b=>b.slice(0),ab=u=>u.buffer.slice(u.byteOffset,u.byteOffset+u.byteLength);
 let e=mkEng(sl(buf)),jb=e.jb;const iv=[];let pk=null;
 await stepTo(jb,jb.mf,()=>{const k=jb.T.K;if(k!==pk){if(k)iv.push({s:jb.Y});else if(iv.length&&iv[iv.length-1].e==null)iv[iv.length-1].e=jb.Y;pk=k}if(k&&(jb.Y%30)==0&&iv.length){const c=iv[iv.length-1];try{(c.xs=c.xs||[]).push(k.ta.F[0].a.x)}catch(_){}}if(onProg&&(jb.Y%4000)==0)onProg(Math.round(40*jb.Y/jb.mf))});
 if(iv.length&&iv[iv.length-1].e==null)iv[iv.length-1].e=jb.Y;
 const cand=iv.filter(x=>x.e-x.s>=3000);if(!cand.length)return[];
-e=mkEng(sl(buf));jb=e.jb;const outs=[];
-for(let i=0;i<cand.length;i++){const x=cand[i];await stepTo(jb,x.s-1,()=>{if(onProg&&(jb.Y%4000)==0)onProg(40+Math.round(40*(i+jb.Y/jb.mf)/cand.length))});const rec=new e.ex.ac(jb,3);await stepTo(jb,x.e+1);outs.push(ab(rec.stop()));jb.fc=null}
-const keep=[];for(let i=0;i<outs.length;i++){if(onProg)onProg(80+Math.round(20*i/outs.length));try{const bl=await analyze(sl(outs[i]));if(toMatches(bl,{titulo:'x',doisTempos:false}).length){const tk=Math.max(...bl.map(z=>z.gameTicks||0)),xs=cand[i].xs||[],mo=[];for(let q=0;q<xs.length;q+=10){const w=xs.slice(q,q+10);if(w.length<5&&mo.length)break;mo.push(Math.max(-100,Math.min(100,Math.round(w.reduce((a,b)=>a+b,0)/w.length/700*100))))}mo.length=Math.min(mo.length,Math.ceil(tk/300));keep.push({b:outs[i],t:tk,mo})}}catch(_){}}
+e=mkEng(sl(buf));jb=e.jb;const outs=[],ogs=[];
+for(let i=0;i<cand.length;i++){const x=cand[i];await stepTo(jb,x.s-1,()=>{if(onProg&&(jb.Y%4000)==0)onProg(40+Math.round(40*(i+jb.Y/jb.mf)/cand.length))});const rec=new e.ex.ac(jb,3),og=mkOG(jb);await stepTo(jb,x.e+1,og.after);og.off();ogs.push(og);outs.push(ab(rec.stop()));jb.fc=null}
+const keep=[];for(let i=0;i<outs.length;i++){if(onProg)onProg(80+Math.round(20*i/outs.length));try{const bl=await analyze(sl(outs[i]));if(toMatches(bl,{titulo:'x',doisTempos:false}).length){const tk=Math.max(...bl.map(z=>z.gameTicks||0)),xs=cand[i].xs||[],mo=[];for(let q=0;q<xs.length;q+=10){const w=xs.slice(q,q+10);if(w.length<5&&mo.length)break;mo.push(Math.max(-100,Math.min(100,Math.round(w.reduce((a,b)=>a+b,0)/w.length/700*100))))}mo.length=Math.min(mo.length,Math.ceil(tk/300));keep.push({b:outs[i],t:tk,mo,...(ogFinal(ogs[i],bl)||{})})}}catch(_){}}
 return keep}
 return{analyze,toMatches,cut,setPrior(f){PRI=typeof f=='function'?f:()=>0}}})();
 
