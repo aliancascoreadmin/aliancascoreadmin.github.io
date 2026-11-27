@@ -16353,7 +16353,7 @@ function mkBG(jb,og){const T=jb.T,ROS=[],runs=[],pend=[],wins=[],ring=[];let cur
 const rid=n=>{let i=ROS.findIndex(r=>r.n==n);if(i<0){ROS.push({n,t:0});i=ROS.length-1}return i};
 const S={after(){const K=T.K;if(K&&!K0)K0=K;if(!K){ring.length=0;cur=null;return}
 const B=K.ta.F[0],snap={y:jb.Y,b:[B.a.x,B.a.y,B.D.x,B.D.y],p:[]};let best=null,bd=1e9;
-for(const p of T.I){if(!p.H||!p.ea||(p.ea.w!='Red'&&p.ea.w!='Blue'))continue;const i=rid(p.w);ROS[i].t=p.ea.w=='Red'?1:2;snap.p.push([i,p.H.a.x,p.H.a.y,p.Wb?1:0,p.ea.w=='Red'?1:2]);const d=Math.hypot(p.H.a.x-B.a.x,p.H.a.y-B.a.y)-B.Z-p.H.Z;if(d<1.5&&d<bd){bd=d;best=p}}
+for(const p of T.I){if(!p.H||!p.ea||(p.ea.w!='Red'&&p.ea.w!='Blue'))continue;const i=rid(p.w);ROS[i].t=p.ea.w=='Red'?1:2;ROS[i].av=p.an!=null&&typeof p.an=='string'?p.an:(p.Xb==null?'':p.Xb);snap.p.push([i,p.H.a.x,p.H.a.y,p.Wb?1:0,p.ea.w=='Red'?1:2]);const d=Math.hypot(p.H.a.x-B.a.x,p.H.a.y-B.a.y)-B.Z-p.H.Z;if(d<1.5&&d<bd){bd=d;best=p}}
 if(best){if(cur&&cur.n==best.w&&cur.last>=jb.Y-3)cur.last=jb.Y;else{cur={n:best.w,t:best.ea.w,y:jb.Y,last:jb.Y};runs.push(cur)}}
 ring.push(snap);if(ring.length>700)ring.shift();
 while(og.gs.length>lastG){const gi=lastG++;pend.push({gi,y:jb.Y,left:90})}
@@ -16375,7 +16375,7 @@ const v=+(40*cl(dist/450)+20*cl((sp-6)/8)+6*Math.min(Math.max(chain-1,0),5)+8*Ma
 const gy=h.y,w=win.filter(f=>f.y>=gy-420&&f.y<=gy+90).filter((f,k)=>k%2==0);
 const fr=w.map(f=>{const row=[Math.round(f.b[0]),Math.round(f.b[1])],m={};f.p.forEach(p=>m[p[0]]=p);for(let k=0;k<ROS.length;k++){const p=m[k];row.push(p?Math.round(p[1]):-9999,p?Math.round(p[2]):-9999,p?p[3]:0)}return row});
 let gi=w.findIndex(f=>f.y>=gy);if(gi<0)gi=w.length-1;
-const gsn=win.find(f=>f.y>=gy)||win[win.length-1],ros=ROS.map((r,ix)=>{let tt=0;const e=gsn.p.find(p=>p[0]==ix);if(e)tt=e[4];else{for(let k=win.length-1;k>=0&&!tt;k--){const q2=win[k].p.find(p=>p[0]==ix);if(q2)tt=q2[4]}}return{n:r.n,t:tt||r.t}});
+const gsn=win.find(f=>f.y>=gy)||win[win.length-1],ros=ROS.map((r,ix)=>{let tt=0;const e=gsn.p.find(p=>p[0]==ix);if(e)tt=e[4];else{for(let k=win.length-1;k>=0&&!tt;k--){const q2=win[k].p.find(p=>p[0]==ix);if(q2)tt=q2[4]}}return{n:r.n,t:tt||r.t,av:r.av}});
 out.push({t:g.t,s:g.s,a:g.a,r:g.r,o:g.o?1:0,v,ft,fr,ros,gi})});
 const St=K0.S,seg=St.U.filter(u=>u.Za!==false).map(u=>[Math.round(u.W.a.x),Math.round(u.W.a.y),Math.round(u.ca.a.x),Math.round(u.ca.a.y),isFinite(u.vb)?+(+u.vb).toFixed(4):null]);
 out.forEach(o=>{o.F={x:St.Td,y:St.Sd,h:80};o.seg=seg})}catch(_){}
